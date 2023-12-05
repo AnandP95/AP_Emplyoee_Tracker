@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise'); // Use mysql2/promise for async/await support
 const figlet = require('figlet');
-const { viewTable, addDepartment, addRole, addEmployee, updateEmployee } = require('./databaseActions');
+//const { viewTable, addDepartment, addRole, addEmployee, updateEmployee } = require('./databaseActions');
 
 const choices = [
   'View all departments',
