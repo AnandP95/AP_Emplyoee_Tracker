@@ -1,14 +1,16 @@
 
-DROP DATABASE IF EXISTS employeeTracker_db;
+DROP DATABASE IF EXISTS employee_tr_db;
+CREATE DATABASE IF NOT EXISTS employee_tr_db;
+USE employee_tr_db;
 CREATE TABLE department (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
   
     name VARCHAR(30)
 
    );
 
 CREATE TABLE role (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(30),
     
      salary DECIMAL,
@@ -18,7 +20,7 @@ CREATE TABLE role (
 );
 
 CREATE TABLE employee (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY  AUTO_INCREMENT,
     first_name VARCHAR(30),
    
      last_name VARCHAR(30),

@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
-const mysql = require('mysql2/promise'); // Use mysql2/promise for async/await support
+const mysql = require('mysql2/promise'); 
 const figlet = require('figlet');
-//const { viewTable, addDepartment, addRole, addEmployee, updateEmployee } = require('./databaseActions');
 
 const choices = [
   'View all departments',
@@ -19,7 +18,7 @@ async function startApp() {
       host: 'localhost',
       user: 'root',
       password: '590route3',
-    database: 'employee_Tr_db'
+      database: 'employee_Tr_db'
     });
 
     console.log(`Connected to the employeeTracker_db database.\n`);
@@ -35,29 +34,41 @@ async function startApp() {
 
       switch (action) {
         case 'View all departments':
-          await viewTable(db, 'departments');
-          break;
-        case 'Add a department':
-          await addDepartment(db);
-          break;
-        case 'View all roles':
-          await viewTable(db, 'roles');
-          break;
-        case 'Add a role':
-          await addRole(db);
-          break;
-        case 'View all employees':
-          await viewTable(db, 'employees');
-          break;
-        case 'Add an employee':
-          await addEmployee(db);
-          break;
-        case 'Update an employee role':
-          await updateEmployee(db);
-          break;
-        default:
-          console.log('Invalid choice. Please try again.');
-          break;
+  {
+    const [department] = await db.query('SELECT * FROM department');
+    console.table(department);
+  }
+  break;
+
+// Update the 'Add a department' case
+case 'Add a department':
+  {
+    const answer = await inquirer.prompt({
+      type: 'input',
+      message: 'What is the name of the department?',
+      name: 'deptName'
+    });
+
+    await db.query('INSERT INTO department (name) VALUES (?)', [answer.deptName]);
+    console.log('Department added successfully!');
+  }
+  break;
+
+// Update the 'View all roles' case
+case 'View all roles':
+  {
+    const [roles] = await db.query('SELECT * FROM role');
+    console.table(roles);
+  }
+  break;
+
+// Update the 'View all employees' case
+case 'View all employees':
+  {
+    const [employees] = await db.query('SELECT * FROM employee');
+    console.table(employees);
+  }
+  break;
       }
     }
   } catch (error) {
@@ -65,5 +76,5 @@ async function startApp() {
   }
 }
 
-startApp();
 
+startApp();
