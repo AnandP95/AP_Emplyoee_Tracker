@@ -19,7 +19,7 @@ async function startApp() {
       host: 'localhost',
       user: 'root',
       password: '590route3',
-      database: 'employeeTracker_db',
+    database: 'employee_Tr_db'
     });
 
     console.log(`Connected to the employeeTracker_db database.\n`);
