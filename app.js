@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const mysql = require('mysql2/promise'); 
+const mysql = require('mysql2/promise');
 const figlet = require('figlet');
 
 const choices = [
@@ -10,18 +10,21 @@ const choices = [
   'View all employees',
   'Add an employee',
   'Update an employee role',
+  'Exit'
 ];
+
+const config = {
+  host: 'localhost',
+  user: 'root',
+  password: '590route3', // Replace with your MySQL password
+  database: 'employee_tr_db'
+};
 
 async function startApp() {
   try {
-    const db = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: '590route3',
-      database: 'employee_Tr_db'
-    });
+    const db = await mysql.createConnection(config);
 
-    console.log(`Connected to the employeeTracker_db database.\n`);
+    console.log(`Connected to the employee_db database.\n`);
     console.log(figlet.textSync('Employee Tracker'));
 
     while (true) {
@@ -34,170 +37,160 @@ async function startApp() {
 
       switch (action) {
         case 'View all departments':
-  {
-    const [department] = await db.query('SELECT * FROM department');
-    console.table(department);
-  }
-  break;
-  case 'Update an employee role':
-    await updateEmployeeRole(db);
-    break;
+          const [departments] = await db.query('SELECT * FROM department');
+          console.table(departments);
+          break;
 
-// Update the 'Add a department' case
-case 'Add a department':
-  {
-    const answer = await inquirer.prompt({
-      type: 'input',
-      message: 'What is the name of the department?',
-      name: 'deptName'
-    });
-
-    await db.query('INSERT INTO department (name) VALUES (?)', [answer.deptName]);
-    console.log('Department added successfully!');
-  }
-  break;
-
-// Update the 'View all roles' case
-case 'View all roles':
-  {
-    const [roles] = await db.query('SELECT * FROM role');
-    console.table(roles);
-  }
-  break;
-
-  case 'Add a role':
-    {
-      const answers = await inquirer.prompt([
-       
-        {
-          type: 'input',
-          message: 'What is the name of the role?',
-          name: 'roleName',
-        },
-       
-        {
-          type: 'number',
-           message: 'What is the salary for this role?',
-          name: 'salary',
-        },
-       
-        {
-          type: 'number',
-           message: 'What is the department ID for this role?',
-           name: 'departmentId',
-        },
-      ]);
-  
-      await db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [
-        answers.roleName,
-        answers.salary,
-        answers.departmentId,
-      ]);
-      console.log('Role added successfully!');
-    }
-    break;
-
-
-
-// Update the 'View all employees' case
-case 'View all employees':
-  {
-    const [employees] = await db.query('SELECT * FROM employee');
-    console.table(employees);
-  }
-  break;
-
-
-
-  case 'Add an employee':
-    {
-      const answers = await inquirer.prompt([
-       
-        {
-          type: 'input',
-          message: 'What is the  first name of the employee?',
-          name: 'empFname',
-        },
-       
-        {
-          type: 'input',
-           message: 'What is the last name of the employee?',
-          name: 'empLname',
-        },
-       
-        {
-          type: 'number',
-           message: 'What is the role id for an employee?',
-           name: 'roleId',
-        },
-
-        {
-          type: 'number',
-           message: 'What is the manager id for an employee?',
-           name: 'managerId',
-        },
-      ]);
-  
-      await db.query('INSERT INTO employee (first_name, last_name, role_id , manager_id) VALUES (?, ?, ? , ?)', [
-        answers.empFname,
-        answers.empLname,
-        answers.roleId,
-        answers.managerId,
-      ]);
-      console.log('employees added successfully!');
-    }
-    break;
-
-
-
-
-
-const updateEmployeeRole = async (db) => {
-      try {
-        const answers = await inquirer.prompt([
-          {
+        case 'Add a department':
+          const deptAnswer = await inquirer.prompt({
             type: 'input',
-            message: 'Which employee would you like to update?',
-            name: 'empUpdate',
-          },
-          {
-            type: 'number',
-            message: 'What do you want to update their role to?',
-            name: 'updateRole',
-          },
-        ]);
-    
-        const employeeId = answers.empUpdate;
-        const roleId = answers.updateRole;
-    
-        // Update the employee's role in the database
-        await db.query('UPDATE employee SET role_id = ? WHERE id = ?', [roleId, employeeId]);
-    
-        console.log('Employee role updated successfully!');
-      } catch (error) {
-        console.error('An error occurred:', error.message);
-      }
-    };
-    
+            message: 'What is the name of the department?',
+            name: 'deptName'
+          });
+
+          await db.query('INSERT INTO department (name) VALUES (?)', [deptAnswer.deptName]);
+          console.log('Department added successfully!');
+          break;
+
+        case 'View all roles':
+          const [roles] = await db.query('SELECT * FROM role');
+          console.table(roles);
+          break;
+
+        case 'Add a role':
+          const roleAnswers = await inquirer.prompt([
+            {
+              type: 'input',
+              message: 'What is the name of the role?',
+              name: 'roleName',
+            },
+            {
+              type: 'number',
+              message: 'What is the salary for this role?',
+              name: 'salary',
+            },
+            {
+              type: 'number',
+              message: 'What is the department ID for this role?',
+              name: 'departmentId',
+            },
+          ]);
+
+          await db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [
+            roleAnswers.roleName,
+            roleAnswers.salary,
+            roleAnswers.departmentId,
+          ]);
+          console.log('Role added successfully!');
+          break;
+
+        case 'View all employees':
+          const [employees] = await db.query(`
+  SELECT 
+    e.id AS Employee_ID,
+    e.first_name AS First_Name,
+    e.last_name AS Last_Name,
+    r.title AS Job_Title,
+    d.name AS Department,
+    r.salary AS Salary,
+    CONCAT(m.first_name, ' ', m.last_name) AS Manager
+  FROM employee e
+  LEFT JOIN role r ON e.role_id = r.id
+  LEFT JOIN department d ON r.department_id = d.id
+  LEFT JOIN employee m ON e.manager_id = m.id
+`);
+
+console.table(employees);
+
+break;
+        case 'Add an employee':
+          const employeeAnswers = await inquirer.prompt([
+            {
+              type: 'input',
+              message: 'What is the first name of the employee?',
+              name: 'empFname',
+            },
+            {
+              type: 'input',
+              message: 'What is the last name of the employee?',
+              name: 'empLname',
+            },
+            {
+              type: 'number',
+              message: 'What is the role ID for an employee?',
+              name: 'roleId',
+            },
+            {
+              type: 'number',
+              message: 'What is the manager ID for an employee?',
+              name: 'managerId',
+            },
+          ]);
+
+          await db.query('INSERT INTO employee (first_name, last_name, role_id , manager_id) VALUES (?, ?, ? , ?)', [
+            employeeAnswers.empFname,
+            employeeAnswers.empLname,
+            employeeAnswers.roleId,
+            employeeAnswers.managerId,
+          ]);
+          console.log('Employee added successfully!');
+          break;
+
+          case 'Update an employee role':
+            {
+              // Fetch employees from the database to populate choices
+              const [employees] = await db.query('SELECT id, first_name, last_name FROM employee');
+          
+              const employeeChoices = employees.map(employee => ({
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id,
+              }));
+          
+
+              const [roles] = await db.query('SELECT id, title FROM role');
+
+              const roleChoices = roles.map(role => ({
+                name: role.title,
+                value: role.id,
+              }));
 
 
 
+              const updateAnswers = await inquirer.prompt([
+                {
+                  type: 'list',
+                  message: 'Which employee would you like to update?',
+                  name: 'employee_id',
+                  choices: employeeChoices,
+                },
+                {
+                  type: 'list',
+                  message: 'Enter the new role for the employee:',
+                  name: 'role_id',
+                  choices: roleChoices,
+                },
+              ]);
 
+          
+              await db.query('UPDATE employee SET role_id = ? WHERE id = ?', [updateAnswers.role_id, updateAnswers.employee_id]);
+              console.log('Employee role updated successfully!');
+              break;
+            }
+          
 
+        case 'Exit':
+          console.log('Exiting...');
+          await db.end();
+          return;
 
-
-   
-    
-
-
-
-
+        default:
+          console.log('Invalid choice. Please try again.');
+          break;
       }
     }
   } catch (error) {
     console.error('An error occurred:', error.message);
   }
 }
-
 
 startApp();
