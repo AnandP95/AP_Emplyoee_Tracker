@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
 const figlet = require('figlet');
-
+require('dotenv').config();
 const choices = [
   'View all departments',
   'Add a department',
@@ -14,10 +14,10 @@ const choices = [
 ];
 
 const config = {
-  host: 'localhost',
-  user: 'root',
-  password: '590route3', // Replace with your MySQL password
-  database: 'employee_tr_db'
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE
 };
 
 async function startApp() {
