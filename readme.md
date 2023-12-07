@@ -33,7 +33,7 @@ This is a  Employee Tracker  web  application. THic CLI-command line interface a
 * Link of the demo video:  [https://drive.google.com/file/d/1iE0QyxLfkLfT9Wv9PmlkKNpgsZIqYZ3X/preview]
 
 
-*  ![AP_Employee_Tracker ](Assets/image/module12.gif)
+*  ![AP_Employee_Tracker ](Assets/image/modulet.gif)
 
 ## Technology Used
 * Node.js
@@ -47,7 +47,7 @@ This is a  Employee Tracker  web  application. THic CLI-command line interface a
  ## Contributing
   
   contributors are welcome. 
- Here is demo of the app:  <iframe src="https://drive.google.com/file/d/1iE0QyxLfkLfT9Wv9PmlkKNpgsZIqYZ3X/preview" width="640" height="480"></iframe>
+
 
 
 ## License
